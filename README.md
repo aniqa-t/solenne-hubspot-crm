@@ -1,11 +1,11 @@
-<p align="center"><img src="brand/solenne_logo.png" width="220" alt="Solenne Career Co. logo"></p>
+<p align="center"><img src="solenne_logo.png" width="220" alt="Solenne Career Co. logo"></p>
 
 # HubSpot CRM Implementation and Power BI Analysis
 ### Solenne Career Co. (a fictional career consultancy)
 
 A hands-on project in which I designed and implemented HubSpot CRM for a small service business, migrated a realistic sample dataset, automated the first client follow-up, and analysed the exported data in Power BI.
 
-![Power BI performance dashboard](screenshots/01_powerbi_dashboard.png)
+![Power BI performance dashboard](01_powerbi_dashboard.png)
 
 > Solenne Career Co. is fictional. All names, emails, phone numbers and figures are sample data created for learning purposes.
 
@@ -77,17 +77,9 @@ Individual clients are standalone contacts. Only corporate clients link to a com
 - Multi-step follow-up workflows and a self-booking meetings link
 - HubSpot certification and integrations with tools like Xero
 
-## Repository contents
-```
-brand/        Solenne Career Co. logo and monogram
-data/         Sample CSV files used for the HubSpot import (companies, contacts, deals)
-powerbi/      DAX measures, Power BI theme and dashboard header
-screenshots/  Key screenshots of the HubSpot build and the dashboards
-```
-
 ## How to explore it
 1. Import the three CSV files into a free HubSpot account: companies, then contacts, then deals.
-2. In Power BI, load the CSV files, apply `powerbi/Solenne_Coffee_theme.json`, and recreate the measures from `powerbi/measures.dax`.
+2. In Power BI, load the CSV files, apply `Solenne_Coffee_theme.json`, and recreate the measures from `measures.dax`.
 
 ---
 **Aniqa Tabassum** · Master of Business Analytics, University of Western Australia · Perth, Australia
