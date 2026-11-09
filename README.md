@@ -5,7 +5,7 @@
 
 A hands-on project in which I designed and implemented HubSpot CRM for a small service business, migrated a realistic sample dataset, automated the first client follow-up, and analysed the exported data in Power BI.
 
-![Power BI performance dashboard](01_powerbi_dashboard.png)
+![Power BI performance dashboard](powerbi_dashboard.png)
 
 > Solenne Career Co. is fictional. All names, emails, phone numbers and figures are sample data created for learning purposes.
 
