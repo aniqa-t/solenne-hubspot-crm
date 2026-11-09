@@ -1,0 +1,77 @@
+// Solenne Career Co. – Power BI model
+// Tables: Companies, Contacts, Deals (CSV exports from HubSpot) and a Date table
+// Relationships: Companies[Company Domain Name] 1:* Contacts[Company Domain Name]
+//                Contacts[Email] 1:* Deals[Contact Email]
+//                Date[Date] 1:* Deals[Close Date]
+
+// ---------- Date table (New table) ----------
+Date =
+ADDCOLUMNS (
+    CALENDAR ( DATE ( 2026, 1, 1 ), DATE ( 2026, 12, 31 ) ),
+    "Month", FORMAT ( [Date], "MMM" ),
+    "Month Number", MONTH ( [Date] )
+)
+// Sort Month by Month Number, and mark Date as the date table.
+
+// ---------- Deals calculated column ----------
+Stage Probability =
+SWITCH ( Deals[Deal Stage],
+    "Assessment received", 0.10,
+    "Discovery call booked", 0.25,
+    "Program proposed", 0.50,
+    "Enrolled", 0.90,
+    "Program complete", 1,
+    0 )
+
+// Stage Order is created in Power Query (Add Column > Custom Column) to avoid a circular dependency:
+// if [Deal Stage] = "Assessment received" then 1
+// else if [Deal Stage] = "Discovery call booked" then 2
+// else if [Deal Stage] = "Program proposed" then 3
+// else if [Deal Stage] = "Enrolled" then 4
+// else if [Deal Stage] = "Program complete" then 5
+// else 6
+// Deal Stage is sorted by Stage Order.
+
+// ---------- Measures (Key Measures table) ----------
+Revenue Won = CALCULATE ( SUM ( Deals[Amount] ), Deals[Deal Stage] = "Program complete" )
+
+Deals Won = CALCULATE ( COUNTROWS ( Deals ), Deals[Deal Stage] = "Program complete" )
+
+Deals Lost = CALCULATE ( COUNTROWS ( Deals ), Deals[Deal Stage] = "Closed lost" )
+
+Deal Count = COUNTROWS ( Deals )
+
+Win Rate = DIVIDE ( [Deals Won], [Deals Won] + [Deals Lost] )
+
+Average Deal Value = CALCULATE ( AVERAGE ( Deals[Amount] ), Deals[Deal Stage] = "Program complete" )
+
+Open Pipeline =
+CALCULATE ( SUM ( Deals[Amount] ),
+    NOT Deals[Deal Stage] IN { "Program complete", "Closed lost" } )
+
+Weighted Pipeline =
+SUMX (
+    FILTER ( Deals, NOT Deals[Deal Stage] IN { "Program complete", "Closed lost" } ),
+    Deals[Amount] * Deals[Stage Probability] )
+
+Active Clients = CALCULATE ( COUNTROWS ( Deals ), Deals[Deal Stage] = "Enrolled" )
+
+// Program participants attended a workshop their employer bought, so they are not enquiries
+Total Leads =
+CALCULATE (
+    COUNTROWS ( Contacts ),
+    Contacts[Client Type] <> "Corporate - Participant"
+)
+
+// Australian financial year ends 30 June
+Revenue Fiscal YTD = TOTALYTD ( [Revenue Won], 'Date'[Date], "30/6" )
+
+Revenue MoM % =
+VAR LastMonthRevenue = CALCULATE ( [Revenue Won], DATEADD ( 'Date'[Date], -1, MONTH ) )
+RETURN DIVIDE ( [Revenue Won] - LastMonthRevenue, LastMonthRevenue )
+
+Corporate Revenue Share % =
+DIVIDE (
+    [Revenue Won],
+    CALCULATE ( [Revenue Won], ALL ( Companies ), NOT ISBLANK ( Companies[Company Name] ) )
+)
